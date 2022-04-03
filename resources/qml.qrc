@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/DirectoryTableView.qml</file>
+        <file>qml/DirectoryIconView.qml</file>
+        <file>qml/DirectoryListView.qml</file>
+        <file>qml/FileContextMenu.qml</file>
+    </qresource>
+</RCC>

@@ -3,6 +3,9 @@
 
 #include <QQuickImageProvider>
 
+///
+/// \brief Провайдер изображений, полученных из системы для майм типов
+///
 class MimeTypeIconsProvider : public QQuickImageProvider {
 public:
     MimeTypeIconsProvider();

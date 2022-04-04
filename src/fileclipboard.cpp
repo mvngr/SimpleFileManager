@@ -30,8 +30,11 @@ void FileClipboard::paste(const QString& directoryPath) const
 {
     const QMimeData* mimeData = clipboard->mimeData();
 
+    //получаем название директории, даже если передали название файла
     QFileInfo info = QFileInfo(directoryPath);
     QDir dir = QDir(info.absolutePath());
+
+    //на перемещение
     if (mimeData->hasFormat(cuttedMime)) {
         const QList<QUrl> urls = urlsFromByteArray(mimeData->data(cuttedMime));
 
@@ -43,6 +46,7 @@ void FileClipboard::paste(const QString& directoryPath) const
             emit fileAppeared(newPath);
         }
     } else {
+        //на копирование
         if (mimeData->hasFormat(copiedMime)) {
             const QList<QUrl> urls = urlsFromByteArray(mimeData->data(copiedMime));
 
@@ -75,11 +79,11 @@ void FileClipboard::addToClipboard(const QString& mimeType, const QList<QString>
         data.append(QUrl::fromLocalFile(path));
     }
 
-    QByteArray ba;
-    QDataStream ds(&ba, QIODevice::WriteOnly);
+    QByteArray byteArray;
+    QDataStream ds(&byteArray, QIODevice::WriteOnly);
     ds << data;
 
-    mimeData->setData(mimeType, ba);
+    mimeData->setData(mimeType, byteArray);
     clipboard->setMimeData(mimeData);
 }
 

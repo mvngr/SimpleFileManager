@@ -51,6 +51,7 @@ Item {
     }
 
     TableView {
+        // грустно дела с TableView обстоят :(
 
         id: tableView
 

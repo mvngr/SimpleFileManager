@@ -8,8 +8,11 @@
 #include <QFileInfoList>
 #include <QThread>
 
-#include <QFileSystemModel>
-
+///
+/// \brief Модель директории
+///
+/// Асинхронно получает данные об указанной в setCurrentDir директории
+///
 class DirectoryModel : public QAbstractTableModel {
     Q_OBJECT
     Q_PROPERTY(QString absolutePath READ absolutePath NOTIFY loadingDirectory)
@@ -24,15 +27,18 @@ public:
         Count, ///< Количество столбцов (используется для облегчения кода)
     };
 
+    /// \brief Дополнительные роли модели
+    ///
+    /// Используются в QML элементах
     enum ColumnUserRole {
-        NameRole = Qt::UserRole + 1,
-        TypeRole,
-        SizeRole,
-        ModifiedDateRole,
-        IconRole,
-        IsDirRole,
-        AbsolutePathRole,
-        CountRole,
+        NameRole = Qt::UserRole + 1, ///< Название
+        TypeRole, ///< Тип данных
+        SizeRole, ///< Размер
+        ModifiedDateRole, ///< Дата последнего изменения
+        IconRole, ///< Путь до иконки файла (иконка берется из mime типа файла)
+        IsDirRole, ///< Является ли строка директорией
+        AbsolutePathRole, ///< Абсолютный путь до директории/файла
+        CountRole, ///< Количество столбцов (используется для облегчения кода)
     };
 
     explicit DirectoryModel(QObject* parent = nullptr);
@@ -50,6 +56,8 @@ public:
     QString absolutePath() const;
     QString dirName() const;
 
+    /// \brief Выполяет открытие файла системной программой
+    /// \param path файл, который нужно открыть
     Q_INVOKABLE void openFile(const QString& path) const;
 
     /// \brief Проверяет, существует ли файл и правит кэшированные данные
@@ -58,15 +66,18 @@ public:
     /// \todo Перевести на QFileSystemWatcher
     void checkForUpdate(const QString& filePath);
 signals:
+    /// \brief Начата асинхронная загрузка директории
     void loadingDirectory();
+    /// \brief Завершена асинхронная загрузка директории
     void loadDirectoryFinished();
 
 private:
+    /// \brief Применяет асинхронно полученные данные о директории
     void onDirectoryUpdated(const QFileInfoList& dirInfo);
 
     QDir currentDir_;
     QFileInfoList cache_;
-    DirectoryInfoLoader* loader_;
+    DirectoryInfoLoader* loader_; ///< Асинхронный загрузчик информации о директории
     QThread* loaderThread_;
 };
 

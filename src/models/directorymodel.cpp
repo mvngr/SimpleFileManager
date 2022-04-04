@@ -46,10 +46,8 @@ QVariant DirectoryModel::data(const QModelIndex& index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    static const QMimeDatabase mimeDb;
-
+    // чтобы не нарушать принцип DRY буду обрабатывать колонки как роли
     if (role == Qt::DisplayRole) {
-
         switch (index.column()) {
         case Name:
             role = NameRole;
@@ -72,6 +70,7 @@ QVariant DirectoryModel::data(const QModelIndex& index, int role) const
     case NameRole:
         return cache_[index.row()].baseName();
     case TypeRole:
+        static const QMimeDatabase mimeDb;
         return mimeDb.mimeTypeForFile(cache_[index.row()]).name();
     case SizeRole: {
         static const QLocale locale;
@@ -134,6 +133,10 @@ void DirectoryModel::setCurrentDir(const QString& path)
 
 void DirectoryModel::setCurrentDir(const QDir& directory)
 {
+    if (loaderThread_->isRunning()) {
+        loaderThread_->quit();
+        loaderThread_->wait();
+    }
     currentDir_ = directory;
     emit loadingDirectory();
     QMetaObject::invokeMethod(loader_, "setCurrentDir", Qt::QueuedConnection, Q_ARG(QDir, directory));

@@ -52,11 +52,11 @@ public:
 
     Q_INVOKABLE void openFile(const QString& path) const;
 
-    Q_INVOKABLE void cut(const QString& path) const;
-    Q_INVOKABLE void copy(const QString& path) const;
-    Q_INVOKABLE void paste(const QString& path);
-    Q_INVOKABLE void remove(const QString& path) const;
-
+    /// \brief Проверяет, существует ли файл и правит кэшированные данные
+    /// \param filePath путь до файла, который появился/исчез
+    ///
+    /// \todo Перевести на QFileSystemWatcher
+    void checkForUpdate(const QString& filePath);
 signals:
     void loadingDirectory();
     void loadDirectoryFinished();

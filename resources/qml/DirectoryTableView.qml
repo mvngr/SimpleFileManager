@@ -85,17 +85,34 @@ Item {
                 }
                 clip: true
 
+                FileContextMenu {
+                    id: fileContextMenu
+                    visible: false
+                }
+
                 MouseArea {
                     anchors.fill: parent
 
-                    onDoubleClicked: {
-                        if(isDir)
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: {
+                        if(mouse.button & Qt.RightButton)
                         {
-                            directoryClicked(absolutePath)
+                            fileContextMenu.targetAbsolutePath = absolutePath
+                            fileContextMenu.visible = true
+                            fileContextMenu.x = mouseX
+                            fileContextMenu.y = mouseY
                         }
-                        else
-                        {
-                            tableView.model.openFile(absolutePath)
+                    }
+                    onDoubleClicked: {
+                        if(mouse.button & Qt.LeftButton) {
+                            if(isDir)
+                            {
+                                directoryClicked(absolutePath)
+                            }
+                            else
+                            {
+                                tableView.model.openFile(absolutePath)
+                            }
                         }
                     }
                 }

@@ -1,10 +1,13 @@
 #include "directorymodel.h"
 
+#include <QApplication>
+#include <QClipboard>
 #include <QDateTime>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFileIconProvider>
 #include <QIcon>
+#include <QMimeData>
 #include <QMimeDatabase>
 #include <QUrl>
 #include <array>
@@ -148,36 +151,28 @@ QString DirectoryModel::dirName() const
 
 void DirectoryModel::openFile(const QString& path) const
 {
-    QDesktopServices::openUrl(QUrl(path));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
     qInfo() << tr("Выполнен запуск: %1").arg(path);
 }
 
-void DirectoryModel::cut(const QString& path) const
+void DirectoryModel::checkForUpdate(const QString& filePath)
 {
-}
-
-void DirectoryModel::copy(const QString& path) const
-{
-}
-
-void DirectoryModel::paste(const QString& path)
-{
-    QFileInfo info = QFileInfo(path);
-    FileClipboard::paste(info.absolutePath());
-
-    //добавляем в модель
-    QDir dir = QDir(path);
-    //TODO: где есть а где нет проверять
-    qDebug() << info.absolutePath() << "TO" << currentDir_.absolutePath();
-    if (info.absolutePath() != currentDir_.absolutePath()) {
-        beginInsertRows(QModelIndex(), cache_.size(), cache_.size());
-        cache_.push_back(info);
-        endInsertRows();
+    QFileInfo fileInfo(filePath);
+    if (fileInfo.absolutePath() == currentDir_.path()) {
+        int index = cache_.indexOf(fileInfo);
+        //если файл пропал
+        if (index != -1 && !QFile::exists(filePath)) {
+            beginRemoveRows(QModelIndex(), index, index);
+            cache_.removeAt(index);
+            endRemoveRows();
+        }
+        //если найден новый файл
+        if (index == -1 && QFile::exists(filePath)) {
+            beginInsertRows(QModelIndex(), cache_.size(), cache_.size());
+            cache_.push_back(fileInfo);
+            endInsertRows();
+        }
     }
-}
-
-void DirectoryModel::remove(const QString& path) const
-{
 }
 
 void DirectoryModel::onDirectoryUpdated(const QFileInfoList& dirInfo)

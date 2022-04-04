@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 
+#include "fileclipboard.h"
 #include "mimetypeiconsprovider.h"
 #include "models/directorymodel.h"
 
@@ -18,8 +19,14 @@ int main(int argc, char* argv[])
     QQmlApplicationEngine engine;
 
     DirectoryModel* directoryModel = new DirectoryModel(&engine);
+    FileClipboard* fileClipboard = new FileClipboard(&engine);
+
+    QObject::connect(fileClipboard, &FileClipboard::fileAppeared, directoryModel, &DirectoryModel::checkForUpdate);
+    QObject::connect(fileClipboard, &FileClipboard::fileDisappeared, directoryModel, &DirectoryModel::checkForUpdate);
+
     QQmlContext* context = engine.rootContext();
     context->setContextProperty("directoryModel", directoryModel);
+    context->setContextProperty("fileClipboard", fileClipboard);
 
     engine.addImageProvider("mimeTypeIcon", new MimeTypeIconsProvider());
 

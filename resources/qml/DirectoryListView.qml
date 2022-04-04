@@ -42,20 +42,36 @@ Item {
 
                 clip: true
 
+                FileContextMenu {
+                    id: fileContextMenu
+                    visible: false
+                }
+
                 MouseArea {
                     anchors.fill: parent
                     propagateComposedEvents: true
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: {
-                    listView.currentIndex = index
-                   }
-                    onDoubleClicked: {
-                        if(isDir)
+                        listView.currentIndex = index
+
+                        if(mouse.button & Qt.RightButton)
                         {
-                            directoryClicked(absolutePath)
+                            fileContextMenu.targetAbsolutePath = absolutePath
+                            fileContextMenu.visible = true
+                            fileContextMenu.x = mouseX
+                            fileContextMenu.y = mouseY
                         }
-                        else
-                        {
-                            listView.model.openFile(absolutePath)
+                    }
+                    onDoubleClicked: {
+                        if(mouse.button & Qt.LeftButton) {
+                            if(isDir)
+                            {
+                                directoryClicked(absolutePath)
+                            }
+                            else
+                            {
+                                listView.model.openFile(absolutePath)
+                            }
                         }
                     }
                 }

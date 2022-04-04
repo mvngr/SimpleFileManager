@@ -133,10 +133,6 @@ void DirectoryModel::setCurrentDir(const QString& path)
 
 void DirectoryModel::setCurrentDir(const QDir& directory)
 {
-    if (loaderThread_->isRunning()) {
-        loaderThread_->quit();
-        loaderThread_->wait();
-    }
     currentDir_ = directory;
     emit loadingDirectory();
     QMetaObject::invokeMethod(loader_, "setCurrentDir", Qt::QueuedConnection, Q_ARG(QDir, directory));

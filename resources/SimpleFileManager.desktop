@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Exec=/opt/simple_file_manager/SimpleFileManager
+Name=SimpleFileManager
+Icon=folder
+Categories=System;Utility

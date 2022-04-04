@@ -75,6 +75,20 @@ Item {
                         }
                     }
                 }
+
+                ToolTip
+                {
+                    text: name
+                    visible: listViewArea.containsMouse && text
+                    delay: Qt.styleHints.mousePressAndHoldInterval
+                    x: listViewArea.mouseX
+                }
+                MouseArea {
+                    id: listViewArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    propagateComposedEvents: true
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtLocation 5.15
 import QtPositioning 5.15
+import QtQuick.Controls 2.15
 
 Item {
     id: iconView
@@ -20,6 +21,7 @@ Item {
         Component {
             id: objectDelegate
             Item {
+                id: objectItem
 
                 width: gridView.cellWidth
                 height: gridView.cellHeight
@@ -87,7 +89,19 @@ Item {
                     clip: true
                 }
 
+                ToolTip
+                {
+                    text: name
+                    visible: objectItemArea.containsMouse && text
+                    delay: Qt.styleHints.mousePressAndHoldInterval
 
+                }
+                MouseArea {
+                    id: objectItemArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    propagateComposedEvents: true
+                }
 
             }
         }
